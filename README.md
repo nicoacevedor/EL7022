@@ -1,2 +1,1 @@
-# EL7022
-EL7022 - Procesamiento de Voz en Telecomunicaciones
+# Reconocimiento de emociones en la voz usando Redes Neuronales
