@@ -1,1 +1,1 @@
-# Reconocimiento de emociones en la voz usando Redes Neuronales
+# Reconocimiento de emociones mediante la voz usando Redes Neuronales
