@@ -1,0 +1,2 @@
+[console_scripts]
+emotion-detection = emotion_detection.__main__:main

@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: emotion-detection
+Version: 0.1
+Requires-Dist: black~=22.0
+Requires-Dist: flake8<5.0,>=3.7.9
+Requires-Dist: ipython<8.0,>=7.31.1; python_version < "3.8"
+Requires-Dist: ipython~=8.10; python_version >= "3.8"
+Requires-Dist: isort~=5.0
+Requires-Dist: jupyter~=1.0
+Requires-Dist: jupyterlab_server<2.16.0,>=2.11.1
+Requires-Dist: jupyterlab<3.6.0,~=3.0
+Requires-Dist: kedro~=0.18.14
+Requires-Dist: kedro-telemetry~=0.2.0
+Requires-Dist: nbstripout~=0.4
+Requires-Dist: pytest-cov~=3.0
+Requires-Dist: pytest-mock<2.0,>=1.7.1
+Requires-Dist: pytest~=7.2
+Requires-Dist: traitlets<5.10.0
+Provides-Extra: docs
+Requires-Dist: docutils<0.18.0; extra == "docs"
+Requires-Dist: sphinx~=3.4.3; extra == "docs"
+Requires-Dist: sphinx_rtd_theme==0.5.1; extra == "docs"
+Requires-Dist: nbsphinx==0.8.1; extra == "docs"
+Requires-Dist: nbstripout~=0.4; extra == "docs"
+Requires-Dist: sphinx-autodoc-typehints==1.11.1; extra == "docs"
+Requires-Dist: sphinx_copybutton==0.3.1; extra == "docs"
+Requires-Dist: ipykernel<7.0,>=5.3; extra == "docs"
+Requires-Dist: Jinja2<3.1.0; extra == "docs"
+Requires-Dist: myst-parser~=0.17.2; extra == "docs"

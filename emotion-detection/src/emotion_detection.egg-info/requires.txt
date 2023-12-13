@@ -1,0 +1,31 @@
+black~=22.0
+flake8<5.0,>=3.7.9
+isort~=5.0
+jupyter~=1.0
+jupyterlab_server<2.16.0,>=2.11.1
+jupyterlab<3.6.0,~=3.0
+kedro~=0.18.14
+kedro-telemetry~=0.2.0
+nbstripout~=0.4
+pytest-cov~=3.0
+pytest-mock<2.0,>=1.7.1
+pytest~=7.2
+traitlets<5.10.0
+
+[:python_version < "3.8"]
+ipython<8.0,>=7.31.1
+
+[:python_version >= "3.8"]
+ipython~=8.10
+
+[docs]
+docutils<0.18.0
+sphinx~=3.4.3
+sphinx_rtd_theme==0.5.1
+nbsphinx==0.8.1
+nbstripout~=0.4
+sphinx-autodoc-typehints==1.11.1
+sphinx_copybutton==0.3.1
+ipykernel<7.0,>=5.3
+Jinja2<3.1.0
+myst-parser~=0.17.2
