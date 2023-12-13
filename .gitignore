@@ -8,6 +8,8 @@ Scripts/
 to_zip/
 share/
 .vscode/
+emotion-detection/.ipynb_checkpoints
+emotion-detection/data
 
 *.csv
 *.ipynb

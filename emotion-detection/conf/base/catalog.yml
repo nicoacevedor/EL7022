@@ -1,0 +1,85 @@
+# Data preparation data
+
+raw_data:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/raw_data.csv
+
+other_data:
+  type: pandas.CSVDataSet
+  filepath: data/02_intermediate/other_data.csv
+
+target:
+  type: pandas.CSVDataSet
+  filepath: data/02_intermediate/target.csv
+
+video_names:
+  type: pandas.CSVDataSet
+  filepath: data/02_intermediate/video_names.csv
+
+mfcc_features:
+  type: pandas.CSVDataSet
+  filepath: data/03_primary/mfcc_features.csv
+
+stft_features:
+  type: pandas.CSVDataSet
+  filepath: data/03_primary/stft_features.csv
+
+lpc_features:
+  type: pandas.CSVDataSet
+  filepath: data/03_primary/lpc_features.csv
+
+mel_features:
+  type: pandas.CSVDataSet
+  filepath: data/03_primary/mel_features.csv
+
+X_train_pre:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/X_train_pre.csv
+
+X_val_pre:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/X_val_pre.csv
+
+X_test_pre:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/X_test_pre.csv
+
+y_train_pre:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/y_train_pre.csv
+
+y_val_pre:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/y_val_pre.csv
+
+y_test_pre:
+  type: pandas.CSVDataSet
+  filepath: data/04_feature/y_test_pre.csv
+
+X_train:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/X_train.csv
+
+X_val:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/X_val.csv
+
+X_test:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/X_test.csv
+
+y_train:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/y_train.csv
+
+y_val:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/y_val.csv
+
+y_test:
+  type: pandas.CSVDataSet
+  filepath: data/05_model_input/y_test.csv
+
+dummy:
+  type: text.TextDataSet
+  filepath: data/07_model_output/dummy.txt

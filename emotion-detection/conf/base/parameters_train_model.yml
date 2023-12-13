@@ -1,0 +1,16 @@
+# This is a boilerplate parameters config generated for pipeline 'train_model'
+# using Kedro 0.18.14.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
+
+model_params:
+  model_type: "dense"  # "resnet" o "dense"
+  input_shape: 172
+  n_classes: 6
+  dense_layers: [64, 28]
+  resnet_layers: null  # [[64, 256], [128, 512], [256, 1024], [512, 2048]]
+
+train_params:
+  batch_size: 64
+  epochs: 20

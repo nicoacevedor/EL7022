@@ -1,0 +1,17 @@
+# This is a boilerplate parameters config generated for pipeline 'prepare_data'
+# using Kedro 0.18.14.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
+
+
+data_raw_path: 'C:\Users\Nico\Desktop\uchile\EL7022 - Procesamiento de Voz en Telecomunicaciones\NN_SER\CREMA-D\finishedResponses.csv'
+
+recreate_data: False
+
+split_data_params:
+  random_state: 42
+  train_size: 0.7
+  val_size: 0.2
+  options: ['stft', 'lpc', 'mel', 'mfcc']
+  numeric_data_selection_options: []
