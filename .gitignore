@@ -1,0 +1,15 @@
+CREMA-D/
+etc/
+Include/
+Lib/
+mlruns/
+Scripts/
+.python-version
+to_zip/
+share/
+.vscode/
+
+*.csv
+*.ipynb
+prepare_data.py
+pyvenv.cfg
