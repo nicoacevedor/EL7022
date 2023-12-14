@@ -29,20 +29,43 @@ def select_features(data: pd.DataFrame) -> list[pd.DataFrame]:
     return video_names, target, other_data
 
 
+# def extract_features(audio: np.ndarray, sample_rate: float) -> list[np.ndarray]:
+#     mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate)
+#     mfccs = np.mean(mfccs.T, axis=0)
+
+#     stft = np.abs(librosa.stft(audio))
+#     stft = librosa.feature.chroma_stft(S=stft, sr=sample_rate)
+#     stft = np.mean(stft.T, axis=0)
+
+#     lpc_coef = librosa.lpc(audio, order=12)[1:]
+
+#     mel = librosa.feature.melspectrogram(y=audio, sr=sample_rate)
+#     mel = np.mean(mel.T, axis=0)
+
+#     return mfccs, stft, lpc_coef, mel
+
+
+def get_melspectrogram_db(audio, sample_rate, top_db=80):
+  spec = librosa.feature.melspectrogram(y=audio, sr=sample_rate)
+  spec_db = librosa.power_to_db(spec,top_db=top_db)
+  return spec_db
+
+
+def spec_to_image(spec, eps=1e-6):
+  mean = spec.mean()
+  std = spec.std()
+  spec_norm = (spec - mean) / (std + eps)
+  spec_min, spec_max = spec_norm.min(), spec_norm.max()
+  spec_scaled = 255 * (spec_norm - spec_min) / (spec_max - spec_min)
+  spec_scaled = spec_scaled[~np.isnan(spec_scaled)]
+#   spec_scaled = spec_scaled.astype(np.float32)
+  return spec_scaled
+
+
 def extract_features(audio: np.ndarray, sample_rate: float) -> list[np.ndarray]:
-    mfccs = librosa.feature.mfcc(y=audio, sr=sample_rate)
-    mfccs = np.mean(mfccs.T, axis=0)
-
-    stft = np.abs(librosa.stft(audio))
-    stft = librosa.feature.chroma_stft(S=stft, sr=sample_rate)
-    stft = np.mean(stft.T, axis=0)
-
-    lpc_coef = librosa.lpc(audio, order=12)[1:]
-
-    mel = librosa.feature.melspectrogram(y=audio, sr=sample_rate)
-    mel = np.mean(mel.T, axis=0)
-
-    return mfccs, stft, lpc_coef, mel
+    mel = get_melspectrogram_db(audio, sample_rate)
+    mel = spec_to_image(mel)
+    return mel
 
 
 def label_to_encoded(label_array: np.ndarray, label_dict: dict) -> np.ndarray:
@@ -60,23 +83,54 @@ def process_audio(name: str) -> tuple:
     return extract_features(audio_array, sample_rate)
 
 
-def read_data(df: pd.DataFrame, size: int = 0) -> tuple[np.ndarray]:
+# def read_data(df: pd.DataFrame, size: int = 0) -> tuple[np.ndarray]:
+#     data_size = df.shape[0] if not size else size
+#     mfccs_array = np.zeros((data_size, 20))
+#     stft_array = np.zeros((data_size, 12))
+#     lpc_array = np.zeros((data_size, 12))
+#     mel_array = np.zeros((data_size, 128))
+#     df_in = df.iloc[:data_size].to_numpy()
+#     with Pool() as pool:
+#         results = pool.imap(process_audio, df_in)
+#         for index, (mfccs, stft, lpc_coef, mel) in enumerate(
+#             tqdm(results, total=data_size)
+#         ):
+#             mfccs_array[index] = mfccs
+#             stft_array[index] = stft
+#             lpc_array[index] = lpc_coef
+#             mel_array[index] = mel
+#     return mfccs_array, stft_array, lpc_array, mel_array
+
+
+def read_data(df, size = 0):
     data_size = df.shape[0] if not size else size
-    mfccs_array = np.zeros((data_size, 20))
-    stft_array = np.zeros((data_size, 12))
-    lpc_array = np.zeros((data_size, 12))
-    mel_array = np.zeros((data_size, 128))
+    mel_array = []
     df_in = df.iloc[:data_size].to_numpy()
     with Pool() as pool:
         results = pool.imap(process_audio, df_in)
-        for index, (mfccs, stft, lpc_coef, mel) in enumerate(
-            tqdm(results, total=data_size)
-        ):
-            mfccs_array[index] = mfccs
-            stft_array[index] = stft
-            lpc_array[index] = lpc_coef
-            mel_array[index] = mel
-    return mfccs_array, stft_array, lpc_array, mel_array
+        for index, mel in enumerate(tqdm(results, total=data_size)):
+            mel_array.append(mel)
+    return mel_array
+
+
+# def prepare_data(df: pd.DataFrame, recreate_data: bool) -> tuple[np.ndarray]:
+#     if not recreate_data:
+#         mfcc = np.loadtxt("../mfcc_features.csv", delimiter="|")
+#         stft = np.loadtxt("../stft_features.csv", delimiter="|")
+#         lpc = np.loadtxt("../lpc_features.csv", delimiter="|")
+#         mel = np.loadtxt("../mel_features.csv", delimiter="|")
+
+#     else:
+#         print("Recreating data...")
+#         names = df["clipName"]
+#         mfcc, stft, lpc, mel = read_data(names)
+
+#     mfcc = pd.DataFrame(mfcc, columns=[f"mfcc_{i}" for i in range(mfcc.shape[1])])
+#     stft = pd.DataFrame(stft, columns=[f"stft_{i}" for i in range(stft.shape[1])])
+#     lpc = pd.DataFrame(lpc, columns=[f"lpc_{i}" for i in range(lpc.shape[1])])
+#     mel = pd.DataFrame(mel, columns=[f"mel_{i}" for i in range(mel.shape[1])])
+
+#     return mfcc, stft, lpc, mel
 
 
 def prepare_data(df: pd.DataFrame, recreate_data: bool) -> tuple[np.ndarray]:
@@ -89,20 +143,14 @@ def prepare_data(df: pd.DataFrame, recreate_data: bool) -> tuple[np.ndarray]:
     else:
         print("Recreating data...")
         names = df["clipName"]
-        mfcc, stft, lpc, mel = read_data(names)
+        mel = read_data(names)
 
-    mfcc = pd.DataFrame(mfcc, columns=[f"mfcc_{i}" for i in range(mfcc.shape[1])])
-    stft = pd.DataFrame(stft, columns=[f"stft_{i}" for i in range(stft.shape[1])])
-    lpc = pd.DataFrame(lpc, columns=[f"lpc_{i}" for i in range(lpc.shape[1])])
-    mel = pd.DataFrame(mel, columns=[f"mel_{i}" for i in range(mel.shape[1])])
+    mel = pd.Series(mel)
 
-    return mfcc, stft, lpc, mel
+    return mel
 
 
 def split_data(
-    mfcc: pd.DataFrame,
-    stft: pd.DataFrame,
-    lpc: pd.DataFrame,
     mel: pd.DataFrame,
     other_data: pd.DataFrame,
     target: pd.Series,
@@ -114,15 +162,7 @@ def split_data(
     options = params["options"]
     numeric_data_selection_options = params["numeric_data_selection_options"]
 
-    data = [other_data[numeric_data_selection_options]]
-    if "mfcc" in options:
-        data.append(mfcc)
-    if "stft" in options:
-        data.append(stft)
-    if "lpc" in options:
-        data.append(lpc)
-    if "mel" in options:
-        data.append(mel)
+    data = [other_data[numeric_data_selection_options]] + [mel]
 
     data_conc = pd.concat(data, axis=1)
     X_train_pre, X_med, y_train_pre, y_med = train_test_split(
@@ -133,6 +173,42 @@ def split_data(
     )
 
     return X_train_pre, X_val_pre, X_test_pre, y_train_pre, y_val_pre, y_test_pre
+
+
+# def split_data(
+#     mfcc: pd.DataFrame,
+#     stft: pd.DataFrame,
+#     lpc: pd.DataFrame,
+#     mel: pd.DataFrame,
+#     other_data: pd.DataFrame,
+#     target: pd.Series,
+#     params: dict,
+# ) -> tuple[pd.DataFrame]:
+#     random_state = params["random_state"]
+#     train_size = params["train_size"]
+#     val_size = params["val_size"]
+#     options = params["options"]
+#     numeric_data_selection_options = params["numeric_data_selection_options"]
+
+#     data = [other_data[numeric_data_selection_options]]
+#     if "mfcc" in options:
+#         data.append(mfcc)
+#     if "stft" in options:
+#         data.append(stft)
+#     if "lpc" in options:
+#         data.append(lpc)
+#     if "mel" in options:
+#         data.append(mel)
+
+#     data_conc = pd.concat(data, axis=1)
+#     X_train_pre, X_med, y_train_pre, y_med = train_test_split(
+#         data_conc, target, random_state=random_state, train_size=train_size
+#     )
+#     X_val_pre, X_test_pre, y_val_pre, y_test_pre = train_test_split(
+#         X_med, y_med, random_state=random_state, train_size=val_size / (1 - train_size)
+#     )
+
+#     return X_train_pre, X_val_pre, X_test_pre, y_train_pre, y_val_pre, y_test_pre
 
 
 def process_data(

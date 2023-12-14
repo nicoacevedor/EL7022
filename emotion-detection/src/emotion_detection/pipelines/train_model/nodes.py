@@ -18,6 +18,9 @@ from keras.layers import (
     Input,
     Layer,
     MaxPooling1D,
+    MaxPooling2D,
+    GlobalMaxPooling2D,
+    Flatten
 )
 from keras.metrics import AUC
 from keras.models import Model
@@ -92,16 +95,17 @@ def convolutional_block(X: Layer, f: Any, filters: tuple, s: int = 2) -> Layer:
     return X
 
 
-def create_resnet_model(input_shape: int, n_classes: int, layers: list) -> Model:
-    X_input = Input((input_shape, 1))
-    X = Conv1D(64, 7, strides=2, kernel_initializer=glorot_uniform(seed=0))(X_input)
+def create_resnet_model(input_shape: tuple, n_classes: int, layers: list) -> Model:
+    X_input = Input(input_shape)
+    X = Conv2D(64, 7, strides=2, kernel_initializer=glorot_uniform(seed=0))(X_input)
     X = BatchNormalization(axis=-1)(X)
     X = Activation("relu")(X)
-    X = MaxPooling1D(3, strides=2)(X)
+    X = MaxPooling2D((3, 3), strides=2)(X)
     for layer in layers:
         X = convolutional_block(X, f=3, filters=layer, s=1)
         X = identity_block(X, 3, layer)
-    X = GlobalMaxPooling1D()(X)
+    X = GlobalMaxPooling2D()(X)
+    X = Flatten()(X)
     X = Dense(
         n_classes, activation="softmax", kernel_initializer=glorot_uniform(seed=0)
     )(X)
@@ -165,6 +169,9 @@ def train_model(
     model_params: dict,
     train_params: dict,
 ) -> str:
+    print(X_train.iloc[0])
+    X_train = np.asarray(X_train).astype(np.float32)
+    X_val = np.asarray(X_val).astype(np.float32)
     model = create_model(model_params)
     batch_size = train_params["batch_size"]
     epochs = train_params["epochs"]

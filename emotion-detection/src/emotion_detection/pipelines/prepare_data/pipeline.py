@@ -21,21 +21,13 @@ def create_pipeline(**kwargs) -> Pipeline:
             node(
                 func=prepare_data,
                 inputs=["video_names", "params:recreate_data"],
-                outputs=[
-                    "mfcc_features",
-                    "stft_features",
-                    "lpc_features",
-                    "mel_features",
-                ],
+                outputs="mel_images",
                 name="prepare_data",
             ),
             node(
                 func=split_data,
                 inputs=[
-                    "mfcc_features",
-                    "stft_features",
-                    "lpc_features",
-                    "mel_features",
+                    "mel_images",
                     "other_data",
                     "target",
                     "params:split_data_params",

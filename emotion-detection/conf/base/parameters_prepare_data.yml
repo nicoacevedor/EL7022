@@ -7,11 +7,11 @@
 
 data_raw_path: 'C:\Users\Nico\Desktop\uchile\EL7022 - Procesamiento de Voz en Telecomunicaciones\NN_SER\CREMA-D\finishedResponses.csv'
 
-recreate_data: False
+recreate_data: True
 
 split_data_params:
   random_state: 42
   train_size: 0.7
   val_size: 0.2
-  options: ['stft', 'lpc', 'mel', 'mfcc']
+  options: ['mel']
   numeric_data_selection_options: []
