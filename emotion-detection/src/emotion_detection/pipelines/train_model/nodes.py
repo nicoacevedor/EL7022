@@ -12,6 +12,7 @@ from keras.layers import (
     Add,
     BatchNormalization,
     Conv1D,
+    Conv2D,
     Dense,
     GlobalMaxPooling1D,
     Input,
@@ -48,7 +49,7 @@ def create_dense_model(input_shape: int, n_classes: int, layers: list[int]) -> M
 def identity_block(X: Layer, f: Any, filters: tuple) -> Layer:
     F1, F2 = filters
     X_shortcut = X
-    X = Conv1D(
+    X = Conv2D(
         filters=F1,
         kernel_size=f,
         strides=1,
@@ -57,7 +58,7 @@ def identity_block(X: Layer, f: Any, filters: tuple) -> Layer:
     )(X)
     X = BatchNormalization(axis=-1)(X)
     X = Activation("relu")(X)
-    X = Conv1D(
+    X = Conv2D(
         filters=F2,
         kernel_size=f,
         strides=1,
@@ -73,16 +74,16 @@ def identity_block(X: Layer, f: Any, filters: tuple) -> Layer:
 def convolutional_block(X: Layer, f: Any, filters: tuple, s: int = 2) -> Layer:
     F1, F2 = filters
     X_shortcut = X
-    X = Conv1D(
+    X = Conv2D(
         F1, f, strides=s, padding="same", kernel_initializer=glorot_uniform(seed=0)
     )(X)
     X = BatchNormalization(axis=-1)(X)
     X = Activation("relu")(X)
-    X = Conv1D(
+    X = Conv2D(
         F2, f, strides=1, padding="same", kernel_initializer=glorot_uniform(seed=0)
     )(X)
     X = BatchNormalization(axis=-1)(X)
-    X_shortcut = Conv1D(
+    X_shortcut = Conv2D(
         F2, 1, strides=s, padding="valid", kernel_initializer=glorot_uniform(seed=0)
     )(X_shortcut)
     X_shortcut = BatchNormalization(axis=-1)(X_shortcut)
